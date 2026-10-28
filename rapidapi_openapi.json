@@ -1,0 +1,1458 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "ScrapersHub API - TikTok Top Ads, Shopee SEA Pricing & B2B Leads",
+    "description": "Enterprise-grade scraping & intelligence Micro-SaaS. Provides 3 unified endpoints for TikTok Top Ads creative performance, Shopee Southeast Asia live pricing & sales velocity, and B2B local business leads.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "System"
+        ],
+        "summary": "Health Check & System Status",
+        "description": "Returns service availability, active version, current timestamp, and registered endpoints.",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tiktok/top-ads": {
+      "get": {
+        "tags": [
+          "TikTok Ads"
+        ],
+        "summary": "Discover TikTok Top Performing Ads",
+        "description": "Extract high-converting TikTok Top Ad creatives with full engagement metrics (CTR, CVR, likes, shares), landing page destinations, and video assets across multiple countries and vertical industries.",
+        "operationId": "get_tiktok_top_ads_api_v1_tiktok_top_ads_get",
+        "parameters": [
+          {
+            "name": "country",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 5,
+              "description": "2-letter ISO country code (e.g. US, VN, SG, GB, ID, TH, MY)",
+              "examples": [
+                "US"
+              ],
+              "default": "US",
+              "title": "Country"
+            },
+            "description": "2-letter ISO country code (e.g. US, VN, SG, GB, ID, TH, MY)"
+          },
+          {
+            "name": "industry",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Industry filter (e.g. Beauty & Personal Care, Electronics, Fashion, E-Commerce, App & Games)",
+              "examples": [
+                "Beauty & Personal Care"
+              ],
+              "title": "Industry"
+            },
+            "description": "Industry filter (e.g. Beauty & Personal Care, Electronics, Fashion, E-Commerce, App & Games)"
+          },
+          {
+            "name": "objective",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Campaign objective (e.g. Conversions, Traffic, Lead Generation, Reach)",
+              "examples": [
+                "Conversions"
+              ],
+              "title": "Objective"
+            },
+            "description": "Campaign objective (e.g. Conversions, Traffic, Lead Generation, Reach)"
+          },
+          {
+            "name": "period",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 180,
+              "minimum": 7,
+              "description": "Lookback window in days (7, 30, or 180)",
+              "examples": [
+                30
+              ],
+              "default": 30,
+              "title": "Period"
+            },
+            "description": "Lookback window in days (7, 30, or 180)"
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^(like|ctr|cvr|shares|impressions)$",
+              "description": "Rank sorting criteria: 'like', 'ctr', 'cvr', 'shares', 'impressions'",
+              "examples": [
+                "like"
+              ],
+              "default": "like",
+              "title": "Sort By"
+            },
+            "description": "Rank sorting criteria: 'like', 'ctr', 'cvr', 'shares', 'impressions'"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 50,
+              "minimum": 1,
+              "description": "Results per page (min: 1, max: 50)",
+              "examples": [
+                10
+              ],
+              "default": 10,
+              "title": "Limit"
+            },
+            "description": "Results per page (min: 1, max: 50)"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page index offset (min: 1)",
+              "examples": [
+                1
+              ],
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page index offset (min: 1)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TikTokTopAdsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Pydantic validation failure"
+          }
+        }
+      }
+    },
+    "/api/v1/shopee/pricing": {
+      "get": {
+        "tags": [
+          "Shopee E-Commerce"
+        ],
+        "summary": "Scrape Shopee SEA Product Pricing & Benchmarks",
+        "description": "Scrape real-time product prices, historical sales velocity, review ratings, and discount rates across Southeast Asian Shopee marketplaces (Vietnam, Singapore, Malaysia, Thailand, Philippines, Indonesia).",
+        "operationId": "get_shopee_pricing_api_v1_shopee_pricing_get",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 100,
+              "description": "Target search keywords (e.g. 'wireless headphones', 'skincare serum')",
+              "examples": [
+                "wireless headphones"
+              ],
+              "title": "Query"
+            },
+            "description": "Target search keywords (e.g. 'wireless headphones', 'skincare serum')"
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 5,
+              "description": "Shopee SEA country code: VN, SG, MY, TH, PH, ID, BR",
+              "examples": [
+                "VN"
+              ],
+              "default": "VN",
+              "title": "Country"
+            },
+            "description": "Shopee SEA country code: VN, SG, MY, TH, PH, ID, BR"
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^(sales|relevance|price_asc|price_desc|rating)$",
+              "description": "Sort ranking: 'sales', 'relevance', 'price_asc', 'price_desc', 'rating'",
+              "examples": [
+                "sales"
+              ],
+              "default": "sales",
+              "title": "Sort By"
+            },
+            "description": "Sort ranking: 'sales', 'relevance', 'price_asc', 'price_desc', 'rating'"
+          },
+          {
+            "name": "min_price",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Minimum price threshold in target market currency",
+              "examples": [
+                100000.0
+              ],
+              "title": "Min Price"
+            },
+            "description": "Minimum price threshold in target market currency"
+          },
+          {
+            "name": "max_price",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Maximum price threshold in target market currency",
+              "examples": [
+                2000000.0
+              ],
+              "title": "Max Price"
+            },
+            "description": "Maximum price threshold in target market currency"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 50,
+              "minimum": 1,
+              "description": "Results per page (min: 1, max: 50)",
+              "examples": [
+                10
+              ],
+              "default": 10,
+              "title": "Limit"
+            },
+            "description": "Results per page (min: 1, max: 50)"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page index offset (min: 1)",
+              "examples": [
+                1
+              ],
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page index offset (min: 1)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShopeePricingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid price boundary filter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Pydantic validation failure"
+          }
+        }
+      }
+    },
+    "/api/v1/b2b/leads": {
+      "get": {
+        "tags": [
+          "B2B Local Leads"
+        ],
+        "summary": "Extract Local B2B Business Leads & Contact Info",
+        "description": "Discover targeted local commercial leads filtered by niche and geography. Extracts phone numbers, verified emails, domains, social profiles, review ratings, and coordinates.",
+        "operationId": "get_b2b_leads_api_v1_b2b_leads_get",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 100,
+              "description": "Business industry or specialty keywords (e.g. 'marketing agency', 'dental clinic')",
+              "examples": [
+                "marketing agency"
+              ],
+              "title": "Query"
+            },
+            "description": "Business industry or specialty keywords (e.g. 'marketing agency', 'dental clinic')"
+          },
+          {
+            "name": "location",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 100,
+              "description": "Target city or metro region (e.g. 'Ho Chi Minh City', 'Austin, TX', 'Singapore')",
+              "examples": [
+                "Ho Chi Minh City"
+              ],
+              "title": "Location"
+            },
+            "description": "Target city or metro region (e.g. 'Ho Chi Minh City', 'Austin, TX', 'Singapore')"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 50,
+              "minimum": 1,
+              "description": "Results per page (min: 1, max: 50)",
+              "examples": [
+                10
+              ],
+              "default": 10,
+              "title": "Limit"
+            },
+            "description": "Results per page (min: 1, max: 50)"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page index offset (min: 1)",
+              "examples": [
+                1
+              ],
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page index offset (min: 1)"
+          },
+          {
+            "name": "has_website",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter for businesses with an active verified website",
+              "examples": [
+                true
+              ],
+              "title": "Has Website"
+            },
+            "description": "Filter for businesses with an active verified website"
+          },
+          {
+            "name": "has_phone",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter for businesses with a direct phone number",
+              "examples": [
+                true
+              ],
+              "title": "Has Phone"
+            },
+            "description": "Filter for businesses with a direct phone number"
+          },
+          {
+            "name": "min_rating",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "maximum": 5.0,
+                  "minimum": 0.0
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Minimum review rating filter (0.0 - 5.0)",
+              "examples": [
+                4.5
+              ],
+              "title": "Min Rating"
+            },
+            "description": "Minimum review rating filter (0.0 - 5.0)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/B2BLeadsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Pydantic validation failure"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "B2BLeadItem": {
+        "properties": {
+          "lead_id": {
+            "type": "string",
+            "title": "Lead Id",
+            "description": "Unique lead identifier",
+            "examples": [
+              "lead_b2b_77192"
+            ]
+          },
+          "business_name": {
+            "type": "string",
+            "title": "Business Name",
+            "description": "Official business or company name",
+            "examples": [
+              "Apex Digital Marketing Studio"
+            ]
+          },
+          "category": {
+            "type": "string",
+            "title": "Category",
+            "description": "Industry niche or vertical category",
+            "examples": [
+              "Marketing Agency"
+            ]
+          },
+          "address": {
+            "type": "string",
+            "title": "Address",
+            "description": "Physical street address",
+            "examples": [
+              "128 Nguyen Thi Minh Khai, District 3"
+            ]
+          },
+          "city": {
+            "type": "string",
+            "title": "City",
+            "description": "City or municipality",
+            "examples": [
+              "Ho Chi Minh City"
+            ]
+          },
+          "country": {
+            "type": "string",
+            "title": "Country",
+            "description": "Country code or name",
+            "examples": [
+              "Vietnam"
+            ]
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone",
+            "description": "Direct phone contact",
+            "examples": [
+              "+84 28 3910 8899"
+            ]
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email",
+            "description": "Business contact email",
+            "examples": [
+              "contact@apexstudio.io"
+            ]
+          },
+          "website": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Website",
+            "description": "Official company website URL",
+            "examples": [
+              "https://apexstudio.io"
+            ]
+          },
+          "rating": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rating",
+            "description": "Average review rating (0.0 - 5.0)",
+            "examples": [
+              4.9
+            ]
+          },
+          "review_count": {
+            "type": "integer",
+            "title": "Review Count",
+            "description": "Total verified reviews count",
+            "default": 0,
+            "examples": [
+              87
+            ]
+          },
+          "social_profiles": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Social Profiles",
+            "description": "Discovered social media channels",
+            "examples": [
+              {
+                "facebook": "https://facebook.com/apexdigitalvn",
+                "linkedin": "https://linkedin.com/company/apex-digital-marketing"
+              }
+            ]
+          },
+          "verified": {
+            "type": "boolean",
+            "title": "Verified",
+            "description": "Whether business address and presence are verified",
+            "default": true,
+            "examples": [
+              true
+            ]
+          },
+          "latitude": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latitude",
+            "description": "Geographic latitude coordinate",
+            "examples": [
+              10.7769
+            ]
+          },
+          "longitude": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Longitude",
+            "description": "Geographic longitude coordinate",
+            "examples": [
+              106.6953
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "lead_id",
+          "business_name",
+          "category",
+          "address",
+          "city",
+          "country"
+        ],
+        "title": "B2BLeadItem",
+        "description": "Local business lead item with contact and digital presence info."
+      },
+      "B2BLeadsResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "description": "Query execution status",
+            "default": true
+          },
+          "query": {
+            "type": "string",
+            "title": "Query",
+            "description": "Search niche or business type",
+            "examples": [
+              "marketing agency"
+            ]
+          },
+          "location": {
+            "type": "string",
+            "title": "Location",
+            "description": "Geographic target city/region",
+            "examples": [
+              "Ho Chi Minh City"
+            ]
+          },
+          "total_found": {
+            "type": "integer",
+            "title": "Total Found",
+            "description": "Total verified leads discovered",
+            "examples": [
+              32
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page",
+            "description": "Current page number",
+            "examples": [
+              1
+            ]
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "description": "Maximum leads returned per page",
+            "examples": [
+              10
+            ]
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/B2BLeadItem"
+            },
+            "type": "array",
+            "title": "Data",
+            "description": "List of structured local business leads"
+          }
+        },
+        "type": "object",
+        "required": [
+          "query",
+          "location",
+          "total_found",
+          "page",
+          "limit",
+          "data"
+        ],
+        "title": "B2BLeadsResponse",
+        "description": "B2B Local Leads response schema."
+      },
+      "ErrorResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "description": "Always False for errors",
+            "default": false,
+            "examples": [
+              false
+            ]
+          },
+          "error": {
+            "type": "string",
+            "title": "Error",
+            "description": "Error classification title",
+            "examples": [
+              "Bad Request"
+            ]
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail",
+            "description": "Actionable error description",
+            "examples": [
+              "Query parameter 'limit' must be between 1 and 50."
+            ]
+          },
+          "status_code": {
+            "type": "integer",
+            "title": "Status Code",
+            "description": "HTTP status code",
+            "examples": [
+              400
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "error",
+          "status_code"
+        ],
+        "title": "ErrorResponse",
+        "description": "Standardized API error response format."
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Service health state",
+            "examples": [
+              "healthy"
+            ]
+          },
+          "service": {
+            "type": "string",
+            "title": "Service",
+            "description": "Service identifier",
+            "examples": [
+              "rapidapi-scrapers-hub"
+            ]
+          },
+          "version": {
+            "type": "string",
+            "title": "Version",
+            "description": "API semantic version",
+            "examples": [
+              "1.0.0"
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "title": "Timestamp",
+            "description": "ISO 8601 UTC timestamp",
+            "examples": [
+              "2026-03-30T12:00:00Z"
+            ]
+          },
+          "endpoints_available": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Endpoints Available",
+            "description": "List of active public endpoints",
+            "examples": [
+              [
+                "/health",
+                "/api/v1/tiktok/top-ads",
+                "/api/v1/shopee/pricing",
+                "/api/v1/b2b/leads"
+              ]
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "service",
+          "version",
+          "timestamp",
+          "endpoints_available"
+        ],
+        "title": "HealthResponse",
+        "description": "Health status response schema.",
+        "example": {
+          "endpoints_available": [
+            "/health",
+            "/api/v1/tiktok/top-ads",
+            "/api/v1/shopee/pricing",
+            "/api/v1/b2b/leads"
+          ],
+          "service": "rapidapi-scrapers-hub",
+          "status": "healthy",
+          "timestamp": "2026-03-30T12:00:00Z",
+          "version": "1.0.0"
+        }
+      },
+      "ShopeePricingResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "description": "Query execution status",
+            "default": true
+          },
+          "query": {
+            "type": "string",
+            "title": "Query",
+            "description": "Keywords searched",
+            "examples": [
+              "wireless headphones"
+            ]
+          },
+          "country": {
+            "type": "string",
+            "title": "Country",
+            "description": "Target Southeast Asian market",
+            "examples": [
+              "VN"
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency",
+            "description": "Local currency unit",
+            "examples": [
+              "VND"
+            ]
+          },
+          "total_found": {
+            "type": "integer",
+            "title": "Total Found",
+            "description": "Total matching products identified",
+            "examples": [
+              58
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page",
+            "description": "Current page number",
+            "examples": [
+              1
+            ]
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "description": "Returned item count limit",
+            "examples": [
+              10
+            ]
+          },
+          "average_price": {
+            "type": "number",
+            "title": "Average Price",
+            "description": "Average price across matching products",
+            "examples": [
+              1450000.0
+            ]
+          },
+          "min_price": {
+            "type": "number",
+            "title": "Min Price",
+            "description": "Lowest price among matching products",
+            "examples": [
+              650000.0
+            ]
+          },
+          "max_price": {
+            "type": "number",
+            "title": "Max Price",
+            "description": "Highest price among matching products",
+            "examples": [
+              2890000.0
+            ]
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/ShopeeProductItem"
+            },
+            "type": "array",
+            "title": "Data",
+            "description": "List of competitive product pricing items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "query",
+          "country",
+          "currency",
+          "total_found",
+          "page",
+          "limit",
+          "average_price",
+          "min_price",
+          "max_price",
+          "data"
+        ],
+        "title": "ShopeePricingResponse",
+        "description": "Shopee SEA Pricing benchmark response schema."
+      },
+      "ShopeeProductItem": {
+        "properties": {
+          "item_id": {
+            "type": "string",
+            "title": "Item Id",
+            "description": "Shopee item ID",
+            "examples": [
+              "21495830112"
+            ]
+          },
+          "shop_id": {
+            "type": "string",
+            "title": "Shop Id",
+            "description": "Shopee shop ID",
+            "examples": [
+              "84920194"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Product title",
+            "examples": [
+              "Anker Soundcore Space One Active Noise Cancelling Headphones"
+            ]
+          },
+          "price": {
+            "type": "number",
+            "title": "Price",
+            "description": "Current listed price in local currency",
+            "examples": [
+              1890000.0
+            ]
+          },
+          "original_price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Original Price",
+            "description": "Strikethrough original price",
+            "examples": [
+              2490000.0
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency",
+            "description": "3-letter ISO currency code",
+            "examples": [
+              "VND"
+            ]
+          },
+          "discount_percentage": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Discount Percentage",
+            "description": "Discount percentage off original price",
+            "default": 0,
+            "examples": [
+              24
+            ]
+          },
+          "rating_star": {
+            "type": "number",
+            "title": "Rating Star",
+            "description": "Average seller rating star (1-5)",
+            "examples": [
+              4.88
+            ]
+          },
+          "historical_sold": {
+            "type": "integer",
+            "title": "Historical Sold",
+            "description": "Total units sold all-time",
+            "examples": [
+              3420
+            ]
+          },
+          "stock": {
+            "type": "integer",
+            "title": "Stock",
+            "description": "Current stock available",
+            "examples": [
+              85
+            ]
+          },
+          "shop_location": {
+            "type": "string",
+            "title": "Shop Location",
+            "description": "Province / City of seller warehouse",
+            "examples": [
+              "TP. Hồ Chí Minh"
+            ]
+          },
+          "is_official_shop": {
+            "type": "boolean",
+            "title": "Is Official Shop",
+            "description": "Whether seller is Shopee Mall / Official verified",
+            "examples": [
+              true
+            ]
+          },
+          "product_url": {
+            "type": "string",
+            "title": "Product Url",
+            "description": "Full Shopee marketplace URL",
+            "examples": [
+              "https://shopee.vn/product/84920194/21495830112"
+            ]
+          },
+          "image_url": {
+            "type": "string",
+            "title": "Image Url",
+            "description": "Product high-resolution image URL",
+            "examples": [
+              "https://cf.shopee.vn/file/vn-11134207-7r98o-lsi3jkl91.jpg"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "item_id",
+          "shop_id",
+          "name",
+          "price",
+          "currency",
+          "rating_star",
+          "historical_sold",
+          "stock",
+          "shop_location",
+          "is_official_shop",
+          "product_url",
+          "image_url"
+        ],
+        "title": "ShopeeProductItem",
+        "description": "Shopee SEA e-commerce product pricing item."
+      },
+      "TikTokAdItem": {
+        "properties": {
+          "ad_id": {
+            "type": "string",
+            "title": "Ad Id",
+            "description": "Unique ad creative ID",
+            "examples": [
+              "tt_ad_9842103"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "description": "Ad caption or creative headline",
+            "examples": [
+              "Viral Lip Gloss Plumper - 50% Off Today!"
+            ]
+          },
+          "advertiser_name": {
+            "type": "string",
+            "title": "Advertiser Name",
+            "description": "Brand or advertiser name",
+            "examples": [
+              "GlowCosmetics Official"
+            ]
+          },
+          "industry": {
+            "type": "string",
+            "title": "Industry",
+            "description": "Vertical industry category",
+            "examples": [
+              "Beauty & Personal Care"
+            ]
+          },
+          "country": {
+            "type": "string",
+            "title": "Country",
+            "description": "Target 2-letter country ISO code",
+            "examples": [
+              "US"
+            ]
+          },
+          "objective": {
+            "type": "string",
+            "title": "Objective",
+            "description": "Campaign objective",
+            "examples": [
+              "Conversions"
+            ]
+          },
+          "ctr": {
+            "type": "number",
+            "title": "Ctr",
+            "description": "Click-Through Rate percentage (%)",
+            "examples": [
+              3.85
+            ]
+          },
+          "cvr": {
+            "type": "number",
+            "title": "Cvr",
+            "description": "Conversion Rate percentage (%)",
+            "examples": [
+              2.14
+            ]
+          },
+          "likes": {
+            "type": "integer",
+            "title": "Likes",
+            "description": "Total likes count",
+            "examples": [
+              124500
+            ]
+          },
+          "comments": {
+            "type": "integer",
+            "title": "Comments",
+            "description": "Total comments count",
+            "examples": [
+              3420
+            ]
+          },
+          "shares": {
+            "type": "integer",
+            "title": "Shares",
+            "description": "Total shares count",
+            "examples": [
+              8900
+            ]
+          },
+          "video_duration": {
+            "type": "integer",
+            "title": "Video Duration",
+            "description": "Video length in seconds",
+            "examples": [
+              23
+            ]
+          },
+          "landing_page_url": {
+            "type": "string",
+            "title": "Landing Page Url",
+            "description": "Target landing page or product URL",
+            "examples": [
+              "https://brand.com/products/lip-gloss"
+            ]
+          },
+          "video_url": {
+            "type": "string",
+            "title": "Video Url",
+            "description": "Direct video preview URL",
+            "examples": [
+              "https://v16-webapp-prime.tiktokcdn.com/sample_ad_9842103.mp4"
+            ]
+          },
+          "cover_image_url": {
+            "type": "string",
+            "title": "Cover Image Url",
+            "description": "Creative thumbnail image URL",
+            "examples": [
+              "https://p16-sign.tiktokcdn-us.com/sample_cover_9842103.jpg"
+            ]
+          },
+          "publish_date": {
+            "type": "string",
+            "title": "Publish Date",
+            "description": "Ad first seen date in ISO format",
+            "examples": [
+              "2026-03-24T08:15:00Z"
+            ]
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Tags",
+            "description": "Associated creative tags",
+            "examples": [
+              [
+                "beauty",
+                "lipgloss",
+                "fyp",
+                "sale"
+              ]
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "ad_id",
+          "title",
+          "advertiser_name",
+          "industry",
+          "country",
+          "objective",
+          "ctr",
+          "cvr",
+          "likes",
+          "comments",
+          "shares",
+          "video_duration",
+          "landing_page_url",
+          "video_url",
+          "cover_image_url",
+          "publish_date"
+        ],
+        "title": "TikTokAdItem",
+        "description": "Individual TikTok Top Ad performance item."
+      },
+      "TikTokTopAdsResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "description": "Query execution status",
+            "default": true
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total",
+            "description": "Total matching creative records",
+            "examples": [
+              45
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page",
+            "description": "Current page number",
+            "examples": [
+              1
+            ]
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "description": "Items per page",
+            "examples": [
+              10
+            ]
+          },
+          "country": {
+            "type": "string",
+            "title": "Country",
+            "description": "Country queried",
+            "examples": [
+              "US"
+            ]
+          },
+          "industry": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Industry",
+            "description": "Industry filter applied",
+            "examples": [
+              "Beauty & Personal Care"
+            ]
+          },
+          "objective": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Objective",
+            "description": "Objective filter applied",
+            "examples": [
+              "Conversions"
+            ]
+          },
+          "period_days": {
+            "type": "integer",
+            "title": "Period Days",
+            "description": "Lookback time window in days",
+            "examples": [
+              30
+            ]
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/TikTokAdItem"
+            },
+            "type": "array",
+            "title": "Data",
+            "description": "List of top performing ad creatives"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "page",
+          "limit",
+          "country",
+          "period_days",
+          "data"
+        ],
+        "title": "TikTokTopAdsResponse",
+        "description": "TikTok Top Ads query response schema."
+      }
+    },
+    "securitySchemes": {
+      "RapidAPIKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-RapidAPI-Key",
+        "description": "Your RapidAPI Subscription Secret Key"
+      },
+      "RapidAPIHost": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-RapidAPI-Host",
+        "description": "RapidAPI Host Identifier (e.g. scrapers-hub.p.rapidapi.com)"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://scrapers-hub.p.rapidapi.com",
+      "description": "RapidAPI Production Gateway"
+    },
+    {
+      "url": "http://localhost:8000",
+      "description": "Local Development Server"
+    }
+  ],
+  "security": [
+    {
+      "RapidAPIKey": [],
+      "RapidAPIHost": []
+    }
+  ]
+}
