@@ -1109,7 +1109,7 @@
             "title": "Shop Location",
             "description": "Province / City of seller warehouse",
             "examples": [
-              "TP. Hồ Chí Minh"
+              "TP. H\u1ed3 Ch\u00ed Minh"
             ]
           },
           "is_official_shop": {
@@ -1441,12 +1441,8 @@
   },
   "servers": [
     {
-      "url": "https://scrapers-hub.p.rapidapi.com",
-      "description": "RapidAPI Production Gateway"
-    },
-    {
-      "url": "http://localhost:8000",
-      "description": "Local Development Server"
+      "url": "https://rapidapi-scrapers-hub.onrender.com",
+      "description": "Production Live Server (Render)"
     }
   ],
   "security": [
